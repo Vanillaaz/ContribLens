@@ -1,0 +1,27 @@
+{
+  "name": "@ContribLens/themes",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Curated, contrast-validated theme token sets for the ContribLens SVG renderer.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
+  }
+}

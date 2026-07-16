@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "node_modules/.cache/.tsbuildinfo"
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../domain" },
+    { "path": "../github-client" },
+    { "path": "../contribution-collector" },
+    { "path": "../contribution-rules" },
+    { "path": "../language-analytics" },
+    { "path": "../confidence-model" },
+    { "path": "../test-fixtures" }
+  ]
+}

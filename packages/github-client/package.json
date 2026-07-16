@@ -1,0 +1,29 @@
+{
+  "name": "@ContribLens/github-client",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "GitHub GraphQL and REST API adapter for the Contribution Analytics Engine.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ContribLens/domain": "workspace:*",
+    "@octokit/graphql": "^8.2.1",
+    "@octokit/rest": "^21.1.1"
+  }
+}

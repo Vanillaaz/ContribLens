@@ -1,0 +1,29 @@
+{
+  "name": "@ContribLens/language-analytics",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Language attribution engine — estimates personal language usage from qualified authored changes.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ContribLens/domain": "workspace:*",
+    "@ContribLens/contribution-rules": "workspace:*",
+    "linguist-js": "^2.9.2"
+  }
+}

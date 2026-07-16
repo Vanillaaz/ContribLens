@@ -1,0 +1,37 @@
+{
+  "name": "@ContribLens/analytics-engine",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Analytics engine orchestrator — coordinates the full analytics pipeline and produces AnalyticsSnapshot.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ContribLens/domain": "workspace:*",
+    "@ContribLens/github-client": "workspace:*",
+    "@ContribLens/contribution-collector": "workspace:*",
+    "@ContribLens/contribution-rules": "workspace:*",
+    "@ContribLens/language-analytics": "workspace:*",
+    "@ContribLens/confidence-model": "workspace:*",
+    "lru-cache": "^11.0.2"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0",
+    "@ContribLens/test-fixtures": "workspace:*"
+  }
+}

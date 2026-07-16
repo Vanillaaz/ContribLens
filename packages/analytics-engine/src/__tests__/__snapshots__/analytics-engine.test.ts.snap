@@ -1,0 +1,166 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AnalyticsEngine > should successfully generate a golden AnalyticsSnapshot from mock GitHub data 1`] = `
+{
+  "activity": {
+    "discoveredRepositoryCount": 1,
+    "repositoryDiscoveryTruncated": false,
+    "totals": [
+      {
+        "count": 5,
+        "isComplete": true,
+        "type": "commit",
+      },
+      {
+        "count": 0,
+        "isComplete": true,
+        "type": "pull_request",
+      },
+      {
+        "count": 0,
+        "isComplete": true,
+        "type": "review",
+      },
+      {
+        "count": 0,
+        "isComplete": true,
+        "type": "issue",
+      },
+    ],
+  },
+  "classifierVersion": "1.0.0",
+  "confidence": {
+    "allReasonCodes": [],
+    "dimensions": [
+      {
+        "dimension": "activity_coverage",
+        "level": "high",
+        "reasonCodes": [],
+        "reasons": [],
+      },
+      {
+        "dimension": "repository_accessibility",
+        "level": "high",
+        "reasonCodes": [],
+        "reasons": [],
+      },
+      {
+        "dimension": "change_detail_coverage",
+        "level": "high",
+        "reasonCodes": [],
+        "reasons": [],
+      },
+      {
+        "dimension": "language_attribution",
+        "level": "high",
+        "reasonCodes": [],
+        "reasons": [],
+      },
+      {
+        "dimension": "rule_certainty",
+        "level": "high",
+        "reasonCodes": [],
+        "reasons": [],
+      },
+      {
+        "dimension": "api_health",
+        "level": "high",
+        "reasonCodes": [],
+        "reasons": [],
+      },
+      {
+        "dimension": "time_window_completeness",
+        "level": "high",
+        "reasonCodes": [],
+        "reasons": [],
+      },
+    ],
+    "overall": "high",
+    "summary": "",
+  },
+  "coverage": {
+    "commitsWithFileDetail": 2,
+    "commitsWithoutFileDetail": 0,
+    "discoveredRepositoryCount": 1,
+    "fullyAccessibleRepositoryCount": 1,
+    "inaccessibleSources": [],
+    "paginationIncompleteCount": 0,
+    "prsWithTruncatedFileList": 0,
+    "repositoryDiscoveryTruncated": false,
+  },
+  "developer": {
+    "contributionYears": [
+      2023,
+      2022,
+      2021,
+      2020,
+    ],
+    "displayName": "Small User",
+    "login": "small-user",
+    "nodeId": "MDQ6VXNlcjEyMw==",
+  },
+  "effectiveWindow": {
+    "from": "2023-01-01T00:00:00Z",
+    "to": "2023-12-31T23:59:59Z",
+  },
+  "freshUntil": "2024-01-01T12:05:00.000Z",
+  "generatedAt": "2024-01-01T12:00:00.000Z",
+  "languageBreakdown": {
+    "languages": [
+      {
+        "category": "unknown",
+        "excludedVolume": 0,
+        "indeterminateVolume": 0,
+        "language": "Unknown",
+        "percentageOfQualified": 0.7058823529411765,
+        "qualifiedAdditions": 20,
+        "qualifiedChangeVolume": 24,
+        "qualifiedDeletions": 4,
+      },
+      {
+        "category": "config",
+        "excludedVolume": 0,
+        "indeterminateVolume": 0,
+        "language": "Unknown",
+        "percentageOfQualified": 0.29411764705882354,
+        "qualifiedAdditions": 10,
+        "qualifiedChangeVolume": 10,
+        "qualifiedDeletions": 0,
+      },
+    ],
+    "totalExcludedVolume": 0,
+    "totalIndeterminateVolume": 0,
+    "totalQualifiedVolume": 34,
+    "totalUnavailableVolume": 0,
+    "unclassifiedFileCount": 4,
+  },
+  "metricVersion": "1.0.0",
+  "qualifiedChanges": {
+    "estimatedQualifiedAdditions": 30,
+    "estimatedQualifiedDeletions": 4,
+    "evaluatedFileCount": 4,
+    "excludedFileCount": 0,
+    "excludedVolume": 0,
+    "includedFileCount": 4,
+    "indeterminateFileCount": 0,
+    "indeterminateVolume": 0,
+    "unavailableVolume": 0,
+  },
+  "repositorySummaries": [
+    {
+      "commitCount": 2,
+      "isAccessible": true,
+      "pullRequestCount": 0,
+      "relationship": "owned",
+      "repositoryId": "R_kgDOA1b2c3",
+      "repositorySlug": "small-user/test-repo",
+      "reviewCount": null,
+    },
+  ],
+  "requestedWindow": {
+    "from": "2023-01-01T00:00:00Z",
+    "to": "2023-12-31T23:59:59Z",
+  },
+  "rulesetVersion": "1.0.0",
+}
+`;

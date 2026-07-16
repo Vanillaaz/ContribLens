@@ -1,0 +1,28 @@
+{
+  "name": "@ContribLens/contribution-rules",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Contribution Rules Engine — determines whether a file change should count toward qualified authored-change metrics.",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --clean",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@ContribLens/domain": "workspace:*"
+  }
+}

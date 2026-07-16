@@ -1,0 +1,19 @@
+{
+  "files": [],
+  "references": [
+    { "path": "apps/api" },
+    { "path": "packages/domain" },
+    { "path": "packages/github-client" },
+    { "path": "packages/contribution-collector" },
+    { "path": "packages/normalizer" },
+    { "path": "packages/contribution-rules" },
+    { "path": "packages/language-analytics" },
+    { "path": "packages/confidence-model" },
+    { "path": "packages/analytics-engine" },
+    { "path": "packages/svg-renderer" },
+    { "path": "packages/api-contracts" },
+    { "path": "packages/themes" },
+    { "path": "packages/observability" },
+    { "path": "packages/test-fixtures" }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "node_modules/.cache/.tsbuildinfo",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext"
+  },
+  "include": ["src/**/*.ts"],
+  "references": [
+    { "path": "../../packages/domain" },
+    { "path": "../../packages/github-client" },
+    { "path": "../../packages/contribution-collector" },
+    { "path": "../../packages/contribution-rules" },
+    { "path": "../../packages/language-analytics" },
+    { "path": "../../packages/confidence-model" },
+    { "path": "../../packages/analytics-engine" },
+    { "path": "../../packages/themes" },
+    { "path": "../../packages/svg-renderer" },
+    { "path": "../../packages/api-contracts" }
+  ]
+}

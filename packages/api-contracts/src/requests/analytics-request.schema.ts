@@ -15,6 +15,8 @@ export const AnalyticsRequestSchema = z.object({
 
   theme: z.string().default("default-dark"),
   
+  variant: z.enum(["combined", "contribution-summary", "language-breakdown", "streak-stats"]).default("combined"),
+
   // Cache busting or forced refresh flag for the API
   refresh: z.boolean().default(false).or(z.string().transform(s => s === "true")),
 });

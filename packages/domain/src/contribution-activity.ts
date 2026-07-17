@@ -56,8 +56,25 @@ export interface ContributionActivity {
   readonly totals: readonly ActivityTotal[];
   /** Whether the contribution collection was truncated (> max repositories). */
   readonly repositoryDiscoveryTruncated: boolean;
-  /** Number of repositories discovered via the contribution collection. */
   readonly discoveredRepositoryCount: number;
+  /** The current consecutive days of contributions (counting back from today/end of window). */
+  readonly currentStreak?: number;
+  /** Start date of the current streak. */
+  readonly currentStreakStart?: string;
+  /** End date of the current streak. */
+  readonly currentStreakEnd?: string;
+
+  /** The longest consecutive days of contributions in the fetched window. */
+  readonly longestStreak?: number;
+  /** Start date of the longest streak. */
+  readonly longestStreakStart?: string;
+  /** End date of the longest streak. */
+  readonly longestStreakEnd?: string;
+
+  /** Total repository traffic views for repositories owned by the subject (null if unauthorized/unavailable). */
+  readonly totalViews?: number | null;
+  /** Total repository traffic clones for repositories owned by the subject (null if unauthorized/unavailable). */
+  readonly totalClones?: number | null;
 }
 
 /** Returns the total for a specific activity type, or null if not present. */

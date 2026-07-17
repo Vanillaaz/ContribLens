@@ -32,12 +32,13 @@ Both endpoints accept:
 | Param | Default | Description |
 |---|---|---|
 | `window` | `1` | Years of history to analyze (`1`–`5`, or `all`) |
-| `theme` | `default-dark` | Card theme (`default-dark`, `default-light`, `high-contrast`, `dracula`, `nord`, `midnight-purple`, `github-dimmed`) |
+| `theme` | `default-dark` | Card theme (`default-dark`, `default-light`, `high-contrast`, `dracula`, `nord`, `midnight-purple`, `github-dimmed`, `retro`, `neon`, `portfolio`, `vintage-technology`) |
+| `variant` | `combined` | Select the layout of the SVG card (`combined`, `contribution-summary`, `language-breakdown`, `streak-stats`). Only applies to the `/svg` endpoint. |
 
 ### Example
 
 ```
-GET /svg/torvalds?window=1&theme=default-dark
+GET /svg/torvalds?window=1&theme=dracula&variant=streak-stats
 GET /analytics/torvalds?window=all
 ```
 

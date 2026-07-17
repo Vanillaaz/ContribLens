@@ -154,6 +154,40 @@ export class GitHubClient implements IGitHubClient {
     return response.data as PullRequestFile[];
   }
 
+  async getRepositoryViews(owner: string, repo: string): Promise<{ count: number; uniques: number } | null> {
+    try {
+      const response = await this.executeRest(() =>
+        this.octokit.request("GET /repos/{owner}/{repo}/traffic/views", {
+          owner,
+          repo,
+        }),
+      );
+      return response.data;
+    } catch (err: any) {
+      if (err.status === 403 || err.status === 404) {
+        return null;
+      }
+      throw err;
+    }
+  }
+
+  async getRepositoryClones(owner: string, repo: string): Promise<{ count: number; uniques: number } | null> {
+    try {
+      const response = await this.executeRest(() =>
+        this.octokit.request("GET /repos/{owner}/{repo}/traffic/clones", {
+          owner,
+          repo,
+        }),
+      );
+      return response.data;
+    } catch (err: any) {
+      if (err.status === 403 || err.status === 404) {
+        return null;
+      }
+      throw err;
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Budget and rate limit
   // ---------------------------------------------------------------------------

@@ -98,6 +98,20 @@ export interface IGitHubClient {
   ): Promise<PullRequestFile[]>;
 
   /**
+   * Fetches traffic views for a repository.
+   * Only works if the authenticated user has push access to the repository.
+   * Returns null if unauthorized (403/404).
+   */
+  getRepositoryViews(owner: string, repo: string): Promise<{ count: number; uniques: number } | null>;
+
+  /**
+   * Fetches traffic clones for a repository.
+   * Only works if the authenticated user has push access to the repository.
+   * Returns null if unauthorized (403/404).
+   */
+  getRepositoryClones(owner: string, repo: string): Promise<{ count: number; uniques: number } | null>;
+
+  /**
    * Returns whether the current API budget is too low to continue.
    * The caller should stop enrichment and return a partial result
    * rather than exhausting the rate limit.

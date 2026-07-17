@@ -24,6 +24,15 @@ export const CONTRIBUTIONS_COLLECTION_QUERY = /* GraphQL */ `
         hasActivityInThePast
         restrictedContributionsCount
 
+        contributionCalendar {
+          weeks {
+            contributionDays {
+              contributionCount
+              date
+            }
+          }
+        }
+
         commitContributionsByRepository(maxRepositories: 100) {
           repository {
             id
@@ -100,6 +109,14 @@ export interface ContributionsCollectionQueryResponse {
       totalIssueContributions: number;
       hasActivityInThePast: boolean;
       restrictedContributionsCount: number;
+      contributionCalendar: {
+        weeks: {
+          contributionDays: {
+            contributionCount: number;
+            date: string;
+          }[];
+        }[];
+      };
       commitContributionsByRepository: RepositoryContributionEntry[];
       pullRequestContributionsByRepository: RepositoryContributionEntry[];
       pullRequestReviewContributionsByRepository: RepositoryContributionEntry[];

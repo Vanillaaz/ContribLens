@@ -71,6 +71,7 @@ export class ContributionCollector {
     };
     let repositoryDiscoveryTruncated = false;
     let isComplete = true;
+    const allContributionDays: { date: string; count: number }[] = [];
 
     const effectiveWindow: import("@ContribLens/domain").TimeWindow = {
       from: window.from,
@@ -132,11 +133,59 @@ export class ContributionCollector {
           repositoryDiscoveryTruncated = true;
         }
 
+        for (const day of discovered.contributionDays) {
+          allContributionDays.push(day);
+        }
+
         currentToDate = new Date(chunkFromDate.getTime() - 1000); // 1 second before
       }
     } catch (err: unknown) {
       if (isAnalyticsError(err)) return err;
       return mapToAnalyticsError(err, correlationId, "repository discovery");
+    }
+
+    allContributionDays.sort((a, b) => a.date.localeCompare(b.date));
+
+    let longestStreak = 0;
+    let longestStreakStart = "";
+    let longestStreakEnd = "";
+    
+    let tempStreak = 0;
+    let tempStreakStart = "";
+    for (let i = 0; i < allContributionDays.length; i++) {
+      const day = allContributionDays[i];
+      if (day && day.count > 0) {
+        if (tempStreak === 0) tempStreakStart = day.date;
+        tempStreak++;
+        if (tempStreak > longestStreak) {
+          longestStreak = tempStreak;
+          longestStreakStart = tempStreakStart;
+          longestStreakEnd = day.date;
+        }
+      } else {
+        tempStreak = 0;
+      }
+    }
+
+    let currentStreak = 0;
+    let currentStreakStart = "";
+    let currentStreakEnd = "";
+    
+    let startIndex = allContributionDays.length - 1;
+    // If today has no contributions, the streak is still alive from yesterday
+    if (startIndex >= 0 && allContributionDays[startIndex].count === 0) {
+      startIndex--;
+    }
+
+    for (let i = startIndex; i >= 0; i--) {
+      const day = allContributionDays[i];
+      if (day && day.count > 0) {
+        if (currentStreak === 0) currentStreakEnd = day.date;
+        currentStreak++;
+        currentStreakStart = day.date;
+      } else {
+        break;
+      }
     }
 
     const activity: import("@ContribLens/domain").ContributionActivity = {
@@ -148,6 +197,12 @@ export class ContributionCollector {
       ],
       repositoryDiscoveryTruncated,
       discoveredRepositoryCount: allRepositories.size,
+      currentStreak,
+      currentStreakStart: currentStreak > 0 ? currentStreakStart : undefined,
+      currentStreakEnd: currentStreak > 0 ? currentStreakEnd : undefined,
+      longestStreak,
+      longestStreakStart: longestStreak > 0 ? longestStreakStart : undefined,
+      longestStreakEnd: longestStreak > 0 ? longestStreakEnd : undefined,
     };
     const repositories = allRepositories;
 

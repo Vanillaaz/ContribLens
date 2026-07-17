@@ -16,8 +16,9 @@ import { getTheme } from "@ContribLens/themes";
 import { renderCombinedCard } from "./cards/combined.card.js";
 import { renderContributionSummaryCard } from "./cards/contribution-summary.card.js";
 import { renderLanguageBreakdownCard } from "./cards/language-breakdown.card.js";
+import { renderStreakStatsCard } from "./cards/streak-stats.card.js";
 
-export type CardVariant = "contribution-summary" | "language-breakdown" | "combined";
+export type CardVariant = "contribution-summary" | "language-breakdown" | "combined" | "streak-stats";
 
 export interface RenderConfig {
   /** Which card layout to render. @default "combined" */
@@ -44,7 +45,10 @@ export class SvgRenderer {
         return renderContributionSummaryCard(snapshot, theme, cfg.width);
       case "language-breakdown":
         return renderLanguageBreakdownCard(snapshot, theme, cfg.width);
+      case "streak-stats":
+        return renderStreakStatsCard(snapshot, theme, cfg.width);
       case "combined":
+      default:
         return renderCombinedCard(snapshot, theme, cfg.width);
     }
   }

@@ -66,6 +66,7 @@ export function createSvgRouter(deps: AppDependencies) {
       login: c.req.param("login"),
       window: c.req.query("window"),
       theme: c.req.query("theme"),
+      variant: c.req.query("variant"),
       refresh: c.req.query("refresh"),
     });
 
@@ -82,7 +83,10 @@ export function createSvgRouter(deps: AppDependencies) {
       return errorHandler(result as any, c);
     }
 
-    const svg = deps.svgRenderer.render(result, { theme: reqData.theme });
+    const svg = deps.svgRenderer.render(result, { 
+      theme: reqData.theme, 
+      variant: reqData.variant as "combined" | "contribution-summary" | "language-breakdown" | "streak-stats" 
+    });
 
     c.header("Content-Type", "image/svg+xml");
     c.header("Cache-Control", "public, max-age=300");

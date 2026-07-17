@@ -3,8 +3,12 @@
 exports[`AnalyticsEngine > should successfully generate a golden AnalyticsSnapshot from mock GitHub data 1`] = `
 {
   "activity": {
+    "currentStreak": 0,
     "discoveredRepositoryCount": 1,
+    "longestStreak": 0,
     "repositoryDiscoveryTruncated": false,
+    "totalClones": null,
+    "totalViews": null,
     "totals": [
       {
         "count": 5,

@@ -27,11 +27,18 @@ import {
 import { classifyRepository } from "./repository-classifier.js";
 import type { CoverageTracker } from "./coverage-tracker.js";
 
+export interface ContributionDay {
+  date: string;
+  count: number;
+}
+
 export interface DiscoveredRepositories {
   /** Repositories deduplicated by node ID. */
   readonly repositories: ReadonlyMap<string, Repository>;
   /** Activity totals from the contributions collection response. */
   readonly activity: ContributionActivity;
+  /** Contribution calendar days from this chunk. */
+  readonly contributionDays: ContributionDay[];
 }
 
 export class RepositoryDiscoverer {
@@ -163,6 +170,18 @@ export class RepositoryDiscoverer {
     // Mark effective window boundary (used by snapshot builder)
     void toISODateString; // silence unused import warning — used by caller
 
-    return { repositories: repositoryMap, activity };
+    const contributionDays: ContributionDay[] = [];
+    if (collection.contributionCalendar?.weeks) {
+      for (const week of collection.contributionCalendar.weeks) {
+        for (const day of week.contributionDays) {
+          contributionDays.push({
+            date: day.date,
+            count: day.contributionCount,
+          });
+        }
+      }
+    }
+
+    return { repositories: repositoryMap, activity, contributionDays };
   }
 }

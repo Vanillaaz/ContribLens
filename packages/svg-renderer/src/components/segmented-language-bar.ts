@@ -37,29 +37,25 @@ export function renderSegmentedLanguageBar({
     currentX += segWidth;
   });
 
-  // Render the dot legend
+  // Render the dot legend in a neat grid
   let legendElements = "";
   const dotRadius = 4;
-  let legendX = x;
-  let legendY = y + barHeight + 16;
+  const cols = Math.floor(width / 130) || 1; // 130px minimum per column
+  const colWidth = width / cols;
+  const startY = y + barHeight + 16;
   const itemHeight = 20;
 
-  languages.forEach((lang) => {
+  languages.forEach((lang, i) => {
     const label = `${lang.language} ${Math.round(lang.percentage * 100).toString()}%`;
-    // Approximate text width
-    const textWidth = label.length * (typography.sizeSm * 0.6);
-    const itemWidth = dotRadius * 2 + 8 + textWidth + 16;
-
-    if (legendX + itemWidth > x + width) {
-      legendX = x;
-      legendY += itemHeight;
-    }
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const legendX = x + col * colWidth;
+    const legendY = startY + row * itemHeight;
 
     legendElements += `
       <circle cx="${(legendX + dotRadius).toString()}" cy="${(legendY - dotRadius + 1).toString()}" r="${dotRadius.toString()}" fill="${lang.color}"/>
-      <text x="${(legendX + dotRadius * 2 + 8).toString()}" y="${legendY.toString()}" font-family="${typography.fontFamily}" font-size="${typography.sizeSm.toString()}" fill="${colors.textMuted}">${escapeXml(label)}</text>
+      <text x="${(legendX + dotRadius * 2 + 8).toString()}" y="${legendY.toString()}" font-family="${typography.fontFamily}" font-size="${typography.sizeSm.toString()}" fill="${colors.textMuted}" text-anchor="start">${escapeXml(label)}</text>
     `;
-    legendX += itemWidth;
   });
 
   // We use a clip path to round the corners of the continuous bar
@@ -84,8 +80,7 @@ export function renderSegmentedLanguageBar({
  * Returns the estimated height of the legend based on the number of items and available width.
  */
 export function estimateSegmentedBarHeight(languagesCount: number, width: number): number {
-  // Rough approximation: ~3 items per row on a 300px width
-  const itemsPerRow = Math.max(1, Math.floor(width / 90));
-  const rows = Math.ceil(languagesCount / itemsPerRow);
+  const cols = Math.floor(width / 130) || 1;
+  const rows = Math.ceil(languagesCount / cols);
   return 8 /* bar */ + 16 /* padding */ + rows * 20;
 }

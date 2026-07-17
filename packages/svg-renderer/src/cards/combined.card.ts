@@ -41,32 +41,9 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
     };
   });
 
-  const titleY = spacing.md + typography.sizeLg;
+  const titleY = spacing.xl + typography.sizeLg;
   const windowY = titleY + typography.sizeBase + spacing.xs;
   const dividerY = windowY + spacing.md;
-
-  const activityLines: string[] = [];
-  let y = dividerY + spacing.lg;
-
-  for (const total of snapshot.activity.totals) {
-    if (total.count === null) continue;
-    const label = activityLabel(total.type as string);
-    const iconType = total.type as string === 'pull_request_merged' ? 'pull_request' : total.type as string;
-    const iconSvg = getIconForType(iconType, colors.textMuted);
-    
-    // We adjust the X coordinate for the text to leave room for the 14px icon + spacing
-    activityLines.push(
-      `<g transform="translate(${spacing.lg.toString()}, ${(y - 11).toString()})">${iconSvg}</g>`,
-      `<text x="${(spacing.lg + 20).toString()}" y="${y.toString()}" ` +
-        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
-        `fill="${colors.textMuted}">${escapeXml(label)}:</text>`,
-      `<text x="${(width / 2 - spacing.lg).toString()}" y="${y.toString()}" ` +
-        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
-        `font-weight="${typography.weightBold.toString()}" fill="${colors.textPrimary}" ` +
-        `text-anchor="end">${total.count.toLocaleString()}</text>`,
-    );
-    y += typography.sizeBase + spacing.xs + 4;
-  }
 
   const barY = dividerY + spacing.lg;
   const barX = width / 2 + spacing.md;
@@ -87,6 +64,89 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
   } else {
     segmentedBarSvg = `<text x="${(barX + barWidth / 2).toString()}" y="${barY.toString()}" font-family="${typography.fontFamily}" font-size="${typography.sizeSm.toString()}" fill="${colors.textMuted}" text-anchor="middle">No language data available</text>`;
     barHeightEstimate = typography.sizeSm;
+  }
+
+  const activityLines: string[] = [];
+  
+  // Calculate left column height to vertically center it with the right column
+  const leftItemCount = 
+    snapshot.activity.totals.filter(t => t.count !== null && t.type !== 'review' && t.type !== 'issue').length +
+    (snapshot.activity.discoveredRepositoryCount !== undefined ? 1 : 0) +
+    (snapshot.activity.currentStreak !== undefined ? 1 : 0) +
+    (snapshot.activity.longestStreak !== undefined ? 1 : 0);
+    
+  const leftHeight = leftItemCount * (typography.sizeBase + spacing.xs + 4);
+  const leftOffsetY = Math.max(0, (barHeightEstimate - leftHeight) / 2);
+  let y = dividerY + spacing.lg + leftOffsetY;
+
+  for (const total of snapshot.activity.totals) {
+    if (total.count === null) continue;
+    if (total.type === 'review' || total.type === 'issue') continue;
+    
+    const label = activityLabel(total.type as string);
+    const iconType = total.type as string === 'pull_request_merged' ? 'pull_request' : total.type as string;
+    const iconSvg = getIconForType(iconType, colors.textMuted);
+    
+    // We adjust the X coordinate for the text to leave room for the 14px icon + spacing
+    activityLines.push(
+      `<g transform="translate(${spacing.lg.toString()}, ${(y - 11).toString()})">${iconSvg}</g>`,
+      `<text x="${(spacing.lg + 20).toString()}" y="${y.toString()}" ` +
+        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
+        `fill="${colors.textMuted}">${escapeXml(label)}:</text>`,
+      `<text x="${(width / 2 - spacing.lg).toString()}" y="${y.toString()}" ` +
+        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
+        `font-weight="${typography.weightBold.toString()}" fill="${colors.textPrimary}" ` +
+        `text-anchor="end">${total.count.toLocaleString()}</text>`,
+    );
+    y += typography.sizeBase + spacing.xs + 4;
+  }
+
+  if (snapshot.activity.discoveredRepositoryCount !== undefined) {
+    const label = "Contributed to";
+    const iconSvg = getIconForType("repo", colors.textMuted);
+    activityLines.push(
+      `<g transform="translate(${spacing.lg.toString()}, ${(y - 11).toString()})">${iconSvg}</g>`,
+      `<text x="${(spacing.lg + 20).toString()}" y="${y.toString()}" ` +
+        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
+        `fill="${colors.textMuted}">${escapeXml(label)}:</text>`,
+      `<text x="${(width / 2 - spacing.lg).toString()}" y="${y.toString()}" ` +
+        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
+        `font-weight="${typography.weightBold.toString()}" fill="${colors.textPrimary}" ` +
+        `text-anchor="end">${snapshot.activity.discoveredRepositoryCount.toLocaleString()}</text>`,
+    );
+    y += typography.sizeBase + spacing.xs + 4;
+  }
+
+  if (snapshot.activity.currentStreak !== undefined) {
+    const label = "Current streak";
+    const iconSvg = getIconForType("flame", colors.textMuted);
+    activityLines.push(
+      `<g transform="translate(${spacing.lg.toString()}, ${(y - 11).toString()})">${iconSvg}</g>`,
+      `<text x="${(spacing.lg + 20).toString()}" y="${y.toString()}" ` +
+        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
+        `fill="${colors.textMuted}">${escapeXml(label)}:</text>`,
+      `<text x="${(width / 2 - spacing.lg).toString()}" y="${y.toString()}" ` +
+        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
+        `font-weight="${typography.weightBold.toString()}" fill="${colors.textPrimary}" ` +
+        `text-anchor="end">${snapshot.activity.currentStreak.toLocaleString()} days</text>`,
+    );
+    y += typography.sizeBase + spacing.xs + 4;
+  }
+
+  if (snapshot.activity.longestStreak !== undefined) {
+    const label = "Longest streak";
+    const iconSvg = getIconForType("flame", colors.textMuted);
+    activityLines.push(
+      `<g transform="translate(${spacing.lg.toString()}, ${(y - 11).toString()})">${iconSvg}</g>`,
+      `<text x="${(spacing.lg + 20).toString()}" y="${y.toString()}" ` +
+        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
+        `fill="${colors.textMuted}">${escapeXml(label)}:</text>`,
+      `<text x="${(width / 2 - spacing.lg).toString()}" y="${y.toString()}" ` +
+        `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
+        `font-weight="${typography.weightBold.toString()}" fill="${colors.textPrimary}" ` +
+        `text-anchor="end">${snapshot.activity.longestStreak.toLocaleString()} days</text>`,
+    );
+    y += typography.sizeBase + spacing.xs + 4;
   }
 
   // Calculate dynamic height based on the taller of the two columns

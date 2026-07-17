@@ -50,6 +50,7 @@ export interface AnalyticsEngineOptions {
 }
 
 export class AnalyticsEngine {
+  private readonly client: IGitHubClient;
   private readonly collector: ContributionCollector;
   private readonly rulesEngine: ContributionRulesEngine;
   private readonly languageEngine: LanguageAnalyticsEngine;
@@ -58,6 +59,7 @@ export class AnalyticsEngine {
   private readonly freshUntilTtlMs: number;
 
   constructor(client: IGitHubClient, options: AnalyticsEngineOptions = {}) {
+    this.client = client;
     this.collector = new ContributionCollector(client, DEFAULT_COLLECTOR_CONFIG);
     this.rulesEngine = new ContributionRulesEngine(DEFAULT_RULESET);
     this.languageEngine = new LanguageAnalyticsEngine(new LinguistLanguageClassifier());
@@ -83,6 +85,45 @@ export class AnalyticsEngine {
     });
 
     if (isAnalyticsError(collectionResult)) return collectionResult;
+
+    // 2.5 Fetch traffic for owned repositories
+    let totalViews: number | null = null;
+    let totalClones: number | null = null;
+    
+    const ownedRepos = Array.from(collectionResult.repositories.values()).filter(
+      (repo) => repo.relationship === "owned" && repo.isAccessible
+    );
+
+    // Fetch concurrently (we rely on the client's internal rate limiting if any, or just Promise.all)
+    // To avoid smashing the API, we can just map them. The client will handle pagination/retries.
+    await Promise.all(
+      ownedRepos.map(async (repo) => {
+        if (this.client.isBudgetLow()) return;
+        const [owner, name] = repo.slug.split("/");
+        if (!owner || !name) return;
+        
+        try {
+          const [views, clones] = await Promise.all([
+            this.client.getRepositoryViews(owner, name),
+            this.client.getRepositoryClones(owner, name)
+          ]);
+          if (views !== null) {
+            totalViews = (totalViews ?? 0) + views.count;
+          }
+          if (clones !== null) {
+            totalClones = (totalClones ?? 0) + clones.count;
+          }
+        } catch (e) {
+          // Swallow unexpected errors per repo, they are non-critical
+        }
+      })
+    );
+
+    const activityWithTraffic = {
+      ...collectionResult.activity,
+      totalViews,
+      totalClones,
+    };
 
     // 3. Apply rules engine to all changed files
     const ruleContext = createRuleContext({});
@@ -175,7 +216,7 @@ export class AnalyticsEngine {
       developer: collectionResult.developer,
       requestedWindow: request.window,
       effectiveWindow: collectionResult.effectiveWindow,
-      activity: collectionResult.activity,
+      activity: activityWithTraffic,
       repositorySummaries,
       qualifiedChanges,
       languageBreakdown,

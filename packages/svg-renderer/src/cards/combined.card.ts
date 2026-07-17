@@ -114,7 +114,7 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
   <defs>
     <linearGradient id="bg-gradient" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="${colors.background}"/>
-      <stop offset="100%" stop-color="${colors.backgroundAlt ?? colors.background}"/>
+      <stop offset="100%" stop-color="${colors.background}"/>
     </linearGradient>
     <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
       <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.1"/>

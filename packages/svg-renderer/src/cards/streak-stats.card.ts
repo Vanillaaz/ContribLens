@@ -71,7 +71,7 @@ export function renderStreakStatsCard(snapshot: AnalyticsSnapshot, theme: Theme,
   return `<svg width="${width.toString()}" height="${height.toString()}" viewBox="0 0 ${width.toString()} ${height.toString()}"
   xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ss-title ss-desc">
   <title id="ss-title">Streak Stats for ${escapeXml(snapshot.developer.login)}</title>
-  <desc id="ss-desc">Total contributions: ${totalContributions}, Current streak: ${currentStreak}, Longest streak: ${longestStreak}</desc>
+  <desc id="ss-desc">Total contributions: ${totalContributions.toString()}, Current streak: ${currentStreak.toString()}, Longest streak: ${longestStreak.toString()}</desc>
 
   <defs>
     <linearGradient id="bg-gradient" x1="0" y1="0" x2="1" y2="1">

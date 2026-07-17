@@ -113,7 +113,7 @@ export class AnalyticsEngine {
           if (clones !== null) {
             totalClones = (totalClones ?? 0) + clones.count;
           }
-        } catch (e) {
+        } catch {
           // Swallow unexpected errors per repo, they are non-critical
         }
       })

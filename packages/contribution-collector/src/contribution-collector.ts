@@ -250,7 +250,7 @@ export class ContributionCollector {
             return [];
           }
         },
-        (items: any[]) => items.length > 0,
+        (items: import("@ContribLens/github-client").CommitListItem[]) => items.length > 0,
         () => this.client.isBudgetLow(),
         { maxPages: this.config.maxPagesPerRequest, perPage: this.config.perPage },
       );

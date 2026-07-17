@@ -4,17 +4,7 @@ import { escapeXml } from "../utils/escape.js";
 import { getIconForType } from "../utils/icons.js";
 import { renderPartialDataNotice } from "../components/partial-data-notice.js";
 
-function formatDateRange(from: string, to: string): string {
-  const formatDate = (dateStr: string) => {
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-    } catch {
-      return dateStr.slice(0, 10);
-    }
-  };
-  return `${formatDate(from)} - ${formatDate(to)}`;
-}
+
 
 function formatDate(dateStr: string): string {
   try {

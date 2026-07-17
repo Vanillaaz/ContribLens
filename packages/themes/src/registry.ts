@@ -13,6 +13,10 @@ import { draculaTheme } from "./themes/dracula.js";
 import { nordTheme } from "./themes/nord.js";
 import { midnightPurpleTheme } from "./themes/midnight-purple.js";
 import { githubDimmedTheme } from "./themes/github-dimmed.js";
+import { retro as retroTheme } from "./themes/retro.js";
+import { neon as neonTheme } from "./themes/neon.js";
+import { portfolio as portfolioTheme } from "./themes/portfolio.js";
+import { vintageTechnology as vintageTechnologyTheme } from "./themes/vintage-technology.js";
 
 /**
  * Built-in themes registry.
@@ -25,6 +29,10 @@ export const BUILT_IN_THEMES: Record<string, Theme> = {
   [nordTheme.name]: nordTheme,
   [midnightPurpleTheme.name]: midnightPurpleTheme,
   [githubDimmedTheme.name]: githubDimmedTheme,
+  [retroTheme.name]: retroTheme,
+  [neonTheme.name]: neonTheme,
+  [portfolioTheme.name]: portfolioTheme,
+  [vintageTechnologyTheme.name]: vintageTechnologyTheme,
 };
 
 const THEMES = new Map<string, Theme>([
@@ -35,6 +43,10 @@ const THEMES = new Map<string, Theme>([
   [nordTheme.name, nordTheme],
   [midnightPurpleTheme.name, midnightPurpleTheme],
   [githubDimmedTheme.name, githubDimmedTheme],
+  [retroTheme.name, retroTheme],
+  [neonTheme.name, neonTheme],
+  [portfolioTheme.name, portfolioTheme],
+  [vintageTechnologyTheme.name, vintageTechnologyTheme],
 ]);
 
 /** Returns a registered theme by name, or the default dark theme if not found. */

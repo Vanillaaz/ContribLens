@@ -12,3 +12,7 @@ export { draculaTheme } from "./themes/dracula.js";
 export { nordTheme } from "./themes/nord.js";
 export { midnightPurpleTheme } from "./themes/midnight-purple.js";
 export { githubDimmedTheme } from "./themes/github-dimmed.js";
+export { retro as retroTheme } from "./themes/retro.js";
+export { neon as neonTheme } from "./themes/neon.js";
+export { portfolio as portfolioTheme } from "./themes/portfolio.js";
+export { vintageTechnology as vintageTechnologyTheme } from "./themes/vintage-technology.js";

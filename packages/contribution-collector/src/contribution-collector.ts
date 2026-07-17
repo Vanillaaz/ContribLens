@@ -198,11 +198,9 @@ export class ContributionCollector {
       repositoryDiscoveryTruncated,
       discoveredRepositoryCount: allRepositories.size,
       currentStreak,
-      currentStreakStart: currentStreak > 0 ? currentStreakStart : undefined,
-      currentStreakEnd: currentStreak > 0 ? currentStreakEnd : undefined,
+      ...(currentStreak > 0 ? { currentStreakStart, currentStreakEnd } : {}),
       longestStreak,
-      longestStreakStart: longestStreak > 0 ? longestStreakStart : undefined,
-      longestStreakEnd: longestStreak > 0 ? longestStreakEnd : undefined,
+      ...(longestStreak > 0 ? { longestStreakStart, longestStreakEnd } : {}),
     };
     const repositories = allRepositories;
 

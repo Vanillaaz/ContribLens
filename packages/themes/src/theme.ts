@@ -34,6 +34,8 @@ export interface SpacingScale {
 export interface ColorPalette {
   /** Card background. */
   readonly background: ColorToken;
+  /** Secondary background color for gradients. */
+  readonly backgroundAlt?: ColorToken;
   /** Slightly elevated surface (inner panels). */
   readonly surface: ColorToken;
   /** Border/divider color. */

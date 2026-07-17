@@ -108,10 +108,10 @@ exports[`AnalyticsEngine > should successfully generate a golden AnalyticsSnapsh
   "languageBreakdown": {
     "languages": [
       {
-        "category": "unknown",
+        "category": "source",
         "excludedVolume": 0,
         "indeterminateVolume": 0,
-        "language": "Unknown",
+        "language": "TypeScript",
         "percentageOfQualified": 0.7058823529411765,
         "qualifiedAdditions": 20,
         "qualifiedChangeVolume": 24,
@@ -121,7 +121,7 @@ exports[`AnalyticsEngine > should successfully generate a golden AnalyticsSnapsh
         "category": "config",
         "excludedVolume": 0,
         "indeterminateVolume": 0,
-        "language": "Unknown",
+        "language": "JSON",
         "percentageOfQualified": 0.29411764705882354,
         "qualifiedAdditions": 10,
         "qualifiedChangeVolume": 10,
@@ -132,7 +132,7 @@ exports[`AnalyticsEngine > should successfully generate a golden AnalyticsSnapsh
     "totalIndeterminateVolume": 0,
     "totalQualifiedVolume": 34,
     "totalUnavailableVolume": 0,
-    "unclassifiedFileCount": 4,
+    "unclassifiedFileCount": 0,
   },
   "metricVersion": "1.0.0",
   "qualifiedChanges": {

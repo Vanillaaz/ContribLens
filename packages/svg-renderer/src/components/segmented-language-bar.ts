@@ -33,7 +33,7 @@ export function renderSegmentedLanguageBar({
     if (segWidth < 0.5) return; // Skip tiny slivers
 
     // For first/last segments, we could clip them, but a simple mask works best
-    barElements += `<rect x="${currentX}" y="${y}" width="${segWidth}" height="${barHeight}" fill="${lang.color}"/>\n`;
+    barElements += `<rect x="${currentX.toString()}" y="${y.toString()}" width="${segWidth.toString()}" height="${barHeight.toString()}" fill="${lang.color}"/>\n`;
     currentX += segWidth;
   });
 
@@ -45,7 +45,7 @@ export function renderSegmentedLanguageBar({
   const itemHeight = 20;
 
   languages.forEach((lang) => {
-    const label = `${lang.language} ${Math.round(lang.percentage * 100)}%`;
+    const label = `${lang.language} ${Math.round(lang.percentage * 100).toString()}%`;
     // Approximate text width
     const textWidth = label.length * (typography.sizeSm * 0.6);
     const itemWidth = dotRadius * 2 + 8 + textWidth + 16;
@@ -56,8 +56,8 @@ export function renderSegmentedLanguageBar({
     }
 
     legendElements += `
-      <circle cx="${legendX + dotRadius}" cy="${legendY - dotRadius + 1}" r="${dotRadius}" fill="${lang.color}"/>
-      <text x="${legendX + dotRadius * 2 + 8}" y="${legendY}" font-family="${typography.fontFamily}" font-size="${typography.sizeSm}" fill="${colors.textMuted}">${escapeXml(label)}</text>
+      <circle cx="${(legendX + dotRadius).toString()}" cy="${(legendY - dotRadius + 1).toString()}" r="${dotRadius.toString()}" fill="${lang.color}"/>
+      <text x="${(legendX + dotRadius * 2 + 8).toString()}" y="${legendY.toString()}" font-family="${typography.fontFamily}" font-size="${typography.sizeSm.toString()}" fill="${colors.textMuted}">${escapeXml(label)}</text>
     `;
     legendX += itemWidth;
   });
@@ -66,12 +66,12 @@ export function renderSegmentedLanguageBar({
   return `
     <defs>
       <clipPath id="bar-clip">
-        <rect x="${x}" y="${y}" width="${width}" height="${barHeight}" rx="${rx}"/>
+        <rect x="${x.toString()}" y="${y.toString()}" width="${width.toString()}" height="${barHeight.toString()}" rx="${rx.toString()}"/>
       </clipPath>
     </defs>
     <g clip-path="url(#bar-clip)">
       <!-- Background for empty space if percentages don't add up to exactly 100% due to tiny skips -->
-      <rect x="${x}" y="${y}" width="${width}" height="${barHeight}" fill="${colors.border}" opacity="0.3"/>
+      <rect x="${x.toString()}" y="${y.toString()}" width="${width.toString()}" height="${barHeight.toString()}" fill="${colors.border}" opacity="0.3"/>
       ${barElements}
     </g>
     <g>

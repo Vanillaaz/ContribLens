@@ -17,8 +17,13 @@ export interface ClassificationResult {
 
 export interface ILanguageClassifier {
   /**
-   * Classifies a file by its path and optional patch content.
-   * Never throws — returns `{ language: null, category: "unknown" }` for unrecognizable files.
+   * Evaluates a file path and returns its language classification.
+   * This is a synchronous operation.
    */
   classify(path: string): ClassificationResult;
+
+  /**
+   * Optionally warms up the classifier asynchronously (e.g. loading ML models).
+   */
+  warmUp?(): Promise<void>;
 }

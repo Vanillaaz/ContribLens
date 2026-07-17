@@ -16,6 +16,15 @@ export class LanguageAnalyticsEngine {
   constructor(private readonly classifier: ILanguageClassifier) {}
 
   /**
+   * Warms up the underlying language classifier, if it supports it.
+   */
+  async warmUp(): Promise<void> {
+    if (this.classifier.warmUp) {
+      await this.classifier.warmUp();
+    }
+  }
+
+  /**
    * Computes a LanguageBreakdown from a set of rule-evaluated files.
    *
    * Only `included` files contribute to language estimates.

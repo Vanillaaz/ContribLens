@@ -9,7 +9,7 @@ export const AnalyticsRequestSchema = z.object({
   window: z.union([
     z.literal("1y"),
     z.literal("all"),
-    // Could add strict ISO8601 validation for custom windows here if needed
+    z.string().regex(/^\d+$/, "Window must be a number of years"),
     z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/, "Custom window must be ISO8601 UTC")
   ]).default("1y"),
 

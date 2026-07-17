@@ -1,9 +1,10 @@
 import type { AnalyticsSnapshot } from "@ContribLens/domain";
 import type { Theme } from "@ContribLens/themes";
 import { renderConfidenceBadge } from "../components/confidence-badge.js";
-import { renderLanguageBar } from "../components/language-bar.js";
+import { renderSegmentedLanguageBar, estimateSegmentedBarHeight } from "../components/segmented-language-bar.js";
 import { renderPartialDataNotice } from "../components/partial-data-notice.js";
 import { escapeXml } from "../utils/escape.js";
+import { getIconForType } from "../utils/icons.js";
 
 function activityLabel(type: string): string {
   const labels: Record<string, string> = {
@@ -18,25 +19,45 @@ function activityLabel(type: string): string {
 }
 
 export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, width: number): string {
-  const height = 200;
   const { colors, typography, spacing } = theme;
   const confidence = snapshot.confidence.overall;
   const isPartial = confidence !== "high";
 
-  const topLanguages = (snapshot.languageBreakdown?.languages ?? [])
-    .filter((l: { category: string }) => l.category === "source")
-    .slice(0, 5);
+  // Keep ALL languages except "Unknown" (so config and markup are included too)
+  const validLanguages = (snapshot.languageBreakdown?.languages ?? [])
+    .filter((l: { language: string }) => l.language !== "Unknown");
 
-  const totalQualified = snapshot.languageBreakdown?.totalQualifiedVolume ?? 0;
+  // Calculate the total volume of these languages to rescale percentages to 100%
+  const totalValidVolume = validLanguages.reduce((sum, lang) => sum + (lang.qualifiedChangeVolume ?? 0), 0);
+
+  // Map to the format needed by segmented bar
+  const languagesForBar = validLanguages.map((lang, i) => {
+    // If totalValidVolume is 0, default to 0
+    const rescalePercentage = totalValidVolume > 0 ? (lang.qualifiedChangeVolume ?? 0) / totalValidVolume : 0;
+    return {
+      language: lang.language,
+      percentage: rescalePercentage,
+      color: theme.colors.chartPalette[i % theme.colors.chartPalette.length] ?? colors.accent,
+    };
+  });
+
+  const titleY = spacing.md + typography.sizeLg;
+  const windowY = titleY + typography.sizeBase + spacing.xs;
+  const dividerY = windowY + spacing.md;
 
   const activityLines: string[] = [];
-  let y = spacing.lg + spacing.md;
+  let y = dividerY + spacing.lg;
 
   for (const total of snapshot.activity.totals) {
     if (total.count === null) continue;
     const label = activityLabel(total.type as string);
+    const iconType = total.type as string === 'pull_request_merged' ? 'pull_request' : total.type as string;
+    const iconSvg = getIconForType(iconType, colors.textMuted);
+    
+    // We adjust the X coordinate for the text to leave room for the 14px icon + spacing
     activityLines.push(
-      `<text x="${spacing.lg.toString()}" y="${y.toString()}" ` +
+      `<g transform="translate(${spacing.lg}, ${y - 11})">${iconSvg}</g>`,
+      `<text x="${(spacing.lg + 20).toString()}" y="${y.toString()}" ` +
         `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
         `fill="${colors.textMuted}">${escapeXml(label)}:</text>`,
       `<text x="${(width / 2 - spacing.lg).toString()}" y="${y.toString()}" ` +
@@ -44,30 +65,37 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
         `font-weight="${typography.weightBold.toString()}" fill="${colors.textPrimary}" ` +
         `text-anchor="end">${total.count.toLocaleString()}</text>`,
     );
-    y += typography.sizeBase + spacing.xs;
+    y += typography.sizeBase + spacing.xs + 4;
   }
 
-  let barY = spacing.lg + spacing.md;
-  const barLines: string[] = [];
+  const barY = dividerY + spacing.lg;
   const barX = width / 2 + spacing.md;
   const barWidth = width / 2 - spacing.lg - spacing.md;
 
-  topLanguages.forEach((lang, i) => {
-    const pct = lang.percentageOfQualified ?? 0;
-    const color = theme.colors.chartPalette[i] ?? colors.accent;
-    barLines.push(renderLanguageBar({
+  let segmentedBarSvg = "";
+  let barHeightEstimate = 0;
+
+  if (languagesForBar.length > 0) {
+    segmentedBarSvg = renderSegmentedLanguageBar({
       x: barX,
       y: barY,
       width: barWidth,
-      language: lang.language,
-      percentage: pct,
-      color,
+      languages: languagesForBar,
       theme,
-    }));
-    barY += typography.sizeSm + spacing.sm + 6;
-  });
+    });
+    barHeightEstimate = estimateSegmentedBarHeight(languagesForBar.length, barWidth);
+  } else {
+    segmentedBarSvg = `<text x="${(barX + barWidth / 2).toString()}" y="${barY.toString()}" font-family="${typography.fontFamily}" font-size="${typography.sizeSm.toString()}" fill="${colors.textMuted}" text-anchor="middle">No language data available</text>`;
+    barHeightEstimate = typography.sizeSm;
+  }
 
-  const titleY = spacing.md + typography.sizeLg;
+  // Calculate dynamic height based on the taller of the two columns
+  const leftColumnHeight = y + spacing.md;
+  const rightColumnHeight = barY + barHeightEstimate + spacing.md;
+  
+  // Base height plus partial data notice space
+  const baseHeight = Math.max(leftColumnHeight, rightColumnHeight);
+  const height = isPartial ? baseHeight + spacing.lg : baseHeight;
 
   return `<svg width="${width.toString()}" height="${height.toString()}" viewBox="0 0 ${width.toString()} ${height.toString()}"
   xmlns="http://www.w3.org/2000/svg" role="img"
@@ -77,8 +105,24 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
     `covering ${escapeXml(snapshot.effectiveWindow.from)} to ${escapeXml(snapshot.effectiveWindow.to)}. ` +
     `Confidence: ${confidence}.${isPartial ? " Partial data — see JSON API for details." : ""}</desc>
 
+  <metadata>
+    <script type="application/json" id="contriblens-raw-data">
+      ${JSON.stringify(snapshot).replace(/</g, '\\u003c')}
+    </script>
+  </metadata>
+
+  <defs>
+    <linearGradient id="bg-gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="${colors.background}"/>
+      <stop offset="100%" stop-color="${colors.backgroundAlt ?? colors.background}"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
   <!-- Background -->
-  <rect width="${width.toString()}" height="${height.toString()}" rx="10" fill="${colors.background}" stroke="${colors.border}" stroke-width="1"/>
+  <rect width="${(width - 2).toString()}" height="${(height - 2).toString()}" x="1" y="1" rx="10" fill="url(#bg-gradient)" stroke="${colors.border}" stroke-width="1" filter="url(#shadow)"/>
 
   <!-- Title -->
   <text id="cs-title-text" x="${spacing.lg.toString()}" y="${titleY.toString()}"
@@ -88,7 +132,7 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
   </text>
 
   <!-- Window -->
-  <text x="${spacing.lg.toString()}" y="${(titleY + typography.sizeBase + spacing.xs).toString()}"
+  <text x="${spacing.lg.toString()}" y="${windowY.toString()}"
     font-family="${typography.fontFamily}" font-size="${typography.sizeSm.toString()}"
     fill="${colors.textMuted}">
     ${escapeXml(snapshot.effectiveWindow.from.slice(0, 10))} – ${escapeXml(snapshot.effectiveWindow.to.slice(0, 10))}
@@ -98,15 +142,15 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
   ${renderConfidenceBadge({ level: confidence, x: width - spacing.lg, y: titleY, theme })}
 
   <!-- Divider -->
-  <line x1="${spacing.lg.toString()}" y1="${(spacing.lg + spacing.md + typography.sizeLg + typography.sizeBase + spacing.sm).toString()}"
-    x2="${(width - spacing.lg).toString()}" y2="${(spacing.lg + spacing.md + typography.sizeLg + typography.sizeBase + spacing.sm).toString()}"
+  <line x1="${spacing.lg.toString()}" y1="${dividerY.toString()}"
+    x2="${(width - spacing.lg).toString()}" y2="${dividerY.toString()}"
     stroke="${colors.border}" stroke-width="1"/>
 
   <!-- Activity totals -->
   ${activityLines.join("\n  ")}
 
-  <!-- Language bars -->
-  ${totalQualified > 0 ? barLines.join("\n  ") : `<text x="${(barX + barWidth / 2).toString()}" y="${(height / 2).toString()}" font-family="${typography.fontFamily}" font-size="${typography.sizeSm.toString()}" fill="${colors.textMuted}" text-anchor="middle">No language data available</text>`}
+  <!-- Segmented Language Bar -->
+  ${segmentedBarSvg}
 
   ${isPartial ? renderPartialDataNotice({ x: width / 2, y: height - spacing.sm, theme }) : ""}
 </svg>`;

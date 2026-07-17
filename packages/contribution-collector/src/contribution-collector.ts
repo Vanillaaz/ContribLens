@@ -62,20 +62,94 @@ export class ContributionCollector {
     const developer: DeveloperIdentity = identityResult;
 
     // Step 2: Discover repositories via contribution collection
-    let discovered;
+    const allRepositories = new Map<string, import("@ContribLens/domain").Repository>();
+    const allActivityCounts = {
+      commit: 0,
+      pull_request: 0,
+      review: 0,
+      issue: 0,
+    };
+    let repositoryDiscoveryTruncated = false;
+    let isComplete = true;
+
+    const effectiveWindow: import("@ContribLens/domain").TimeWindow = {
+      from: window.from,
+      to: window.to,
+    };
+
+    if (developer.contributionYears && developer.contributionYears.length > 0) {
+      const earliestYear = Math.min(...developer.contributionYears);
+      const earliestDate = new Date(`${earliestYear}-01-01T00:00:00Z`);
+      if (new Date(effectiveWindow.from) < earliestDate) {
+        (effectiveWindow as any).from = earliestDate.toISOString();
+      }
+    }
+
     try {
-      discovered = await this.repositoryDiscoverer.discover(
-        developer,
-        window,
-        coverageTracker,
-        correlationId,
-      );
+      let currentToDate = new Date(effectiveWindow.to);
+      const minFromDate = new Date(effectiveWindow.from);
+
+      while (currentToDate > minFromDate) {
+        if (this.client.isBudgetLow()) {
+          coverageTracker.recordPaginationIncomplete();
+          isComplete = false;
+          break;
+        }
+
+        let chunkFromDate = new Date(currentToDate);
+        // GitHub contributionsCollection allows up to 1 year. We subtract 1 year and add 1 sec.
+        chunkFromDate.setFullYear(chunkFromDate.getFullYear() - 1);
+        chunkFromDate.setSeconds(chunkFromDate.getSeconds() + 1);
+        
+        if (chunkFromDate < minFromDate) {
+          chunkFromDate = minFromDate;
+        }
+
+        const chunkWindow: TimeWindow = {
+          from: chunkFromDate.toISOString() as import("@ContribLens/domain").ISODateString,
+          to: currentToDate.toISOString() as import("@ContribLens/domain").ISODateString,
+        };
+
+        const discovered = await this.repositoryDiscoverer.discover(
+          developer,
+          chunkWindow,
+          coverageTracker,
+          correlationId,
+        );
+
+        for (const [id, repo] of discovered.repositories.entries()) {
+          allRepositories.set(id, repo);
+        }
+
+        for (const total of discovered.activity.totals) {
+          if (total.count !== null && total.type in allActivityCounts) {
+            allActivityCounts[total.type as keyof typeof allActivityCounts] += total.count;
+          } else if (total.count === null) {
+             isComplete = false;
+          }
+        }
+        if (discovered.activity.repositoryDiscoveryTruncated) {
+          repositoryDiscoveryTruncated = true;
+        }
+
+        currentToDate = new Date(chunkFromDate.getTime() - 1000); // 1 second before
+      }
     } catch (err: unknown) {
       if (isAnalyticsError(err)) return err;
       return mapToAnalyticsError(err, correlationId, "repository discovery");
     }
 
-    const { repositories, activity } = discovered;
+    const activity: import("@ContribLens/domain").ContributionActivity = {
+      totals: [
+        { type: "commit", count: allActivityCounts.commit, isComplete },
+        { type: "pull_request", count: allActivityCounts.pull_request, isComplete },
+        { type: "review", count: allActivityCounts.review, isComplete },
+        { type: "issue", count: allActivityCounts.issue, isComplete },
+      ],
+      repositoryDiscoveryTruncated,
+      discoveredRepositoryCount: allRepositories.size,
+    };
+    const repositories = allRepositories;
 
     // Step 3: Collect commits and PRs per repository
     const allCommits: Commit[] = [];
@@ -113,8 +187,8 @@ export class ContributionCollector {
               owner: repo.owner,
               repo: repo.name,
               author: login,
-              since: window.from,
-              until: window.to,
+              since: effectiveWindow.from,
+              until: effectiveWindow.to,
               page,
               perPage,
             });
@@ -149,7 +223,7 @@ export class ContributionCollector {
           },
           committedAt: rawCommit.commit.author.date
             ? (rawCommit.commit.author.date as unknown as import("@ContribLens/domain").ISODateString)
-            : (window.from as unknown as import("@ContribLens/domain").ISODateString),
+            : (effectiveWindow.from as unknown as import("@ContribLens/domain").ISODateString),
           messageHeadline: rawCommit.commit.message.split("\n")[0] ?? "",
           isMergeCommit: isMerge,
           coveredByPullRequest: false, // updated below
@@ -194,7 +268,7 @@ export class ContributionCollector {
 
     return {
       developer,
-      effectiveWindow: window,
+      effectiveWindow,
       activity,
       repositories,
       commits: allCommits,

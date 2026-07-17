@@ -36,6 +36,7 @@ export function mapToAnalyticsError(
   correlationId: string,
   context: string,
 ): AnalyticsError {
+  console.error("RAW ERROR IN mapToAnalyticsError:", err);
   if (isOctokitErrorLike(err)) {
     const status = err.status;
     const retryAfter = err.response?.headers?.["retry-after"] ?? null;

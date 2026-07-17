@@ -92,9 +92,11 @@ export class AnalyticsEngine {
     );
 
     // 4. Language analytics
-    const languageBreakdown = rulesResult.totalFiles > 0
-      ? this.languageEngine.analyze(rulesResult.evaluatedFiles)
-      : null;
+    let languageBreakdown = null;
+    if (rulesResult.totalFiles > 0) {
+      await this.languageEngine.warmUp();
+      languageBreakdown = this.languageEngine.analyze(rulesResult.evaluatedFiles);
+    }
 
     // 5. Confidence
     const confidence = this.confidenceModel.assess({

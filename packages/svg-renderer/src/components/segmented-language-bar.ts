@@ -28,7 +28,7 @@ export function renderSegmentedLanguageBar({
   let barElements = "";
   
   // Render the segments
-  languages.forEach((lang, i) => {
+  languages.forEach((lang) => {
     const segWidth = Math.max(0, width * lang.percentage);
     if (segWidth < 0.5) return; // Skip tiny slivers
 

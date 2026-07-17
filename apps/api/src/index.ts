@@ -4,7 +4,7 @@ import { createServer } from "./server.js";
 
 const port = process.env["PORT"] ? parseInt(process.env["PORT"], 10) : 3000;
 
-console.log("Starting ContribStats API...");
+console.log("Starting ContribLens API...");
 
 // Initialize dependencies
 const deps = createDependencies(process.env);

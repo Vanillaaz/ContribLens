@@ -32,7 +32,7 @@ export function createServer(deps: AppDependencies): Hono {
   app.use("/svg/*", rateLimit(100, 15 * 60 * 1000));
 
   // Root / Health
-  app.get("/", (c) => c.text("ContribStats API is running. Try /analytics/:username or /svg/:username"));
+  app.get("/", (c) => c.text("ContribLens API is running. Try /analytics/:username or /svg/:username"));
   app.get("/health", (c) => c.json({ status: "ok" }));
 
   // Analytics routes: /analytics/:login (JSON) and /svg/:login (SVG)

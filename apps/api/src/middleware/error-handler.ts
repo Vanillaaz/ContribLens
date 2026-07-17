@@ -6,7 +6,7 @@ import { ZodError } from "zod";
 export const errorHandler: ErrorHandler = (err, c) => {
   let status = 500;
   const problem: ProblemDetails = {
-    type: "https://contribstats.io/errors/internal-server-error",
+    type: "https://ContribLens.io/errors/internal-server-error",
     title: "Internal Server Error",
     status: 500,
     detail: "An unexpected error occurred while processing the request.",
@@ -14,11 +14,11 @@ export const errorHandler: ErrorHandler = (err, c) => {
 
   if (err instanceof ZodError) {
     status = 400;
-    problem.type = "https://contribstats.io/errors/validation-failed";
+    problem.type = "https://ContribLens.io/errors/validation-failed";
     problem.title = "Validation Failed";
     problem.status = 400;
     problem.detail = "One or more fields failed validation.";
-    
+
     const errors: Record<string, string[]> = {};
     for (const issue of err.issues) {
       const path = issue.path.join(".") || "_root";
@@ -29,9 +29,9 @@ export const errorHandler: ErrorHandler = (err, c) => {
   } else if (isAnalyticsError(err)) {
     status = err.code === "USER_NOT_FOUND" ? 404
       : err.code === "UPSTREAM_RATE_LIMITED" ? 429
-      : 500;
-    
-    problem.type = `https://contribstats.io/errors/${err.code.toLowerCase().replace(/_/g, "-")}`;
+        : 500;
+
+    problem.type = `https://ContribLens.io/errors/${err.code.toLowerCase().replace(/_/g, "-")}`;
     problem.title = "Analytics Error";
     problem.status = status;
     problem.detail = err.message;

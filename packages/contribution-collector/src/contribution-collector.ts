@@ -173,7 +173,7 @@ export class ContributionCollector {
     
     let startIndex = allContributionDays.length - 1;
     // If today has no contributions, the streak is still alive from yesterday
-    if (startIndex >= 0 && allContributionDays[startIndex].count === 0) {
+    if (startIndex >= 0 && allContributionDays[startIndex]?.count === 0) {
       startIndex--;
     }
 
@@ -236,7 +236,7 @@ export class ContributionCollector {
 
       // Fetch commits for this repo
       const commitResult = await paginateByPage(
-        async (page, perPage) => {
+        async (page: number, perPage: number) => {
           try {
             return await this.client.listCommits({
               owner: repo.owner,
@@ -252,7 +252,7 @@ export class ContributionCollector {
             return [];
           }
         },
-        (items) => items.length > 0,
+        (items: any[]) => items.length > 0,
         () => this.client.isBudgetLow(),
         { maxPages: this.config.maxPagesPerRequest, perPage: this.config.perPage },
       );

@@ -32,7 +32,7 @@ Both endpoints accept:
 | Param | Default | Description |
 |---|---|---|
 | `window` | `1` | Years of history to analyze (`1`–`5`, or `all`) |
-| `theme` | `default-dark` | Card theme (`default-dark`, `default-light`, `high-contrast`) |
+| `theme` | `default-dark` | Card theme (`default-dark`, `default-light`, `high-contrast`, `dracula`, `nord`, `midnight-purple`, `github-dimmed`) |
 
 ### Example
 

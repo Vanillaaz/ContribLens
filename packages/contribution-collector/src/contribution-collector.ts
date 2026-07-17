@@ -79,7 +79,7 @@ export class ContributionCollector {
 
     if (developer.contributionYears && developer.contributionYears.length > 0) {
       const earliestYear = Math.min(...developer.contributionYears);
-      const earliestDate = new Date(`${earliestYear}-01-01T00:00:00Z`);
+      const earliestDate = new Date(`${earliestYear.toString()}-01-01T00:00:00Z`);
       if (new Date(effectiveWindow.from) < earliestDate) {
         (effectiveWindow as any).from = earliestDate.toISOString();
       }

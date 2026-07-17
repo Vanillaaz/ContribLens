@@ -56,7 +56,7 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
     
     // We adjust the X coordinate for the text to leave room for the 14px icon + spacing
     activityLines.push(
-      `<g transform="translate(${spacing.lg}, ${y - 11})">${iconSvg}</g>`,
+      `<g transform="translate(${spacing.lg.toString()}, ${(y - 11).toString()})">${iconSvg}</g>`,
       `<text x="${(spacing.lg + 20).toString()}" y="${y.toString()}" ` +
         `font-family="${typography.fontFamily}" font-size="${typography.sizeBase.toString()}" ` +
         `fill="${colors.textMuted}">${escapeXml(label)}:</text>`,
@@ -94,7 +94,7 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
   const rightColumnHeight = barY + barHeightEstimate + spacing.md;
   
   // Base height plus partial data notice space
-  const baseHeight = Math.max(leftColumnHeight, rightColumnHeight);
+  const baseHeight = Math.max(leftColumnHeight, rightColumnHeight) + spacing.md; // Add a bit more padding
   const height = isPartial ? baseHeight + spacing.lg : baseHeight;
 
   return `<svg width="${width.toString()}" height="${height.toString()}" viewBox="0 0 ${width.toString()} ${height.toString()}"
@@ -114,10 +114,10 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
   <defs>
     <linearGradient id="bg-gradient" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="${colors.background}"/>
-      <stop offset="100%" stop-color="${colors.background}"/>
+      <stop offset="100%" stop-color="${colors.backgroundAlt ?? colors.background}"/>
     </linearGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.1"/>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="${theme.isDark ? '0.3' : '0.1'}"/>
     </filter>
   </defs>
 

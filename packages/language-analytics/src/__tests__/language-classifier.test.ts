@@ -29,18 +29,18 @@ describe("LinguistLanguageClassifier", () => {
   describe("without warmUp (synchronous fallback)", () => {
     it("uses extension fallback for known config/markup files", () => {
       const json = classifier.classify("package.json");
-      expect(json.language).toBeNull();
+      expect(json.language).toBe("JSON");
       expect(json.category).toBe("config");
 
       const md = classifier.classify("README.md");
-      expect(md.language).toBeNull();
+      expect(md.language).toBe("Markdown");
       expect(md.category).toBe("markup");
     });
 
-    it("returns unknown for unmapped extensions before warmUp", () => {
+    it("returns correctly mapped extensions before warmUp", () => {
       const ts = classifier.classify("src/index.ts");
-      expect(ts.language).toBeNull();
-      expect(ts.category).toBe("unknown");
+      expect(ts.language).toBe("TypeScript");
+      expect(ts.category).toBe("source");
     });
   });
 

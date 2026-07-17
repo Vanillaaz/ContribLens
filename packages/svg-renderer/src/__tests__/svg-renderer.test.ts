@@ -10,8 +10,8 @@ describe("SvgRenderer", () => {
     activity: { totals: [{ type: "commit", count: 42 }] },
     languageBreakdown: {
       languages: [
-        { language: "TypeScript", volume: 1000, percentageOfQualified: 0.8, category: "source" },
-        { language: "HTML", volume: 250, percentageOfQualified: 0.2, category: "source" }
+        { language: "TypeScript", qualifiedChangeVolume: 1000, percentageOfQualified: 0.8, category: "source" },
+        { language: "HTML", qualifiedChangeVolume: 250, percentageOfQualified: 0.2, category: "source" }
       ],
       totalQualifiedVolume: 1250,
       totalExcludedVolume: 0

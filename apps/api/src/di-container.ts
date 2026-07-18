@@ -26,7 +26,7 @@ export function createDependencies(env: Record<string, string | undefined>): App
   const clientConfig = createDefaultClientConfig({
     token,
     userAgent,
-    // Note: Concurrency and limits can be tuned here based on env vars
+    requestBudget: null, // Disable global request budget on the singleton client
   });
 
   const client = new GitHubClient(clientConfig);

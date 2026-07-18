@@ -165,11 +165,7 @@ export function renderCombinedCard(snapshot: AnalyticsSnapshot, theme: Theme, wi
     `covering ${escapeXml(snapshot.effectiveWindow.from)} to ${escapeXml(snapshot.effectiveWindow.to)}. ` +
     `Confidence: ${confidence}.${isPartial ? " Partial data — see JSON API for details." : ""}</desc>
 
-  <metadata>
-    <script type="application/json" id="contriblens-raw-data">
-      ${JSON.stringify(snapshot).replace(/</g, '\\u003c')}
-    </script>
-  </metadata>
+
 
   <defs>
     <linearGradient id="bg-gradient" x1="0" y1="0" x2="1" y2="1">

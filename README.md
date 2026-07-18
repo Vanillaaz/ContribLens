@@ -5,7 +5,17 @@ Personal GitHub contribution analytics — exposing what your commits are actual
 Embed a live, beautiful, premium stats card in your GitHub profile README in one line:
 
 ```markdown
-![ContribLens](https://your-deploy.com/svg/your-username)
+![ContribLens](https://contriblens-production.up.railway.app/svg/Vanillaaz)
+```
+
+## 🔥 Use the Public Service (No Deployment Required!)
+
+You do not need to self-host to use ContribLens! I am hosting a public instance on Railway for the community to use for free.
+
+Just replace `Vanillaaz` with your own GitHub username in this URL and paste it into your README:
+
+```markdown
+![My GitHub Contribution Stats](https://contriblens-production.up.railway.app/svg/your-username)
 ```
 
 ## What it does
@@ -45,23 +55,36 @@ GET /analytics/torvalds?window=all
 ## Embed in your README
 
 ```markdown
-![My GitHub Contribution Stats](https://your-deploy.com/svg/your-username)
+![My GitHub Contribution Stats](https://contriblens-production.up.railway.app/svg/your-username)
 ```
 
 Or with a link to the raw JSON data:
 
 ```markdown
-[![My GitHub Contribution Stats](https://your-deploy.com/svg/your-username)](https://your-deploy.com/analytics/your-username)
+[![My GitHub Contribution Stats](https://contriblens-production.up.railway.app/svg/your-username)](https://contriblens-production.up.railway.app/analytics/your-username)
 ```
 
-## Self-host
+## Deployment & Self-hosting
+
+If you prefer to run your own private instance (or if you want to use your own GitHub Token to avoid global rate limits):
 
 ### Requirements
 
-- Node.js ≥ 22
+- Node.js ≥ 22 (for local or manual hosting)
 - A GitHub personal access token with `read:user` and `public_repo` scopes
 
-### With Docker
+### Deploy to Railway (Recommended)
+
+1. Fork this repository.
+2. Go to [Railway.app](https://railway.app) and select **New Project** > **Deploy from GitHub repo**.
+3. Select your forked `ContribLens` repository.
+4. Leave the build commands blank (Railway automatically detects the `pnpm` workspace).
+5. In the Railway dashboard, go to the **Variables** tab and add `GITHUB_TOKEN=your_token_here`.
+6. Under **Settings** > **Networking**, click **Generate Domain**.
+
+Your stats are now live at `https://your-generated-domain.up.railway.app/svg/your-username`!
+
+### Self-host with Docker
 
 ```bash
 docker build -t ContribLens .

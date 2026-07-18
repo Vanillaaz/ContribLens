@@ -6,6 +6,8 @@ import { errorHandler } from "../middleware/error-handler.js";
 
 function parseTimeWindow(windowQuery: string | undefined): TimeWindow {
   const now = new Date();
+  // Round to start of day (UTC) so the cache key remains stable for 24 hours
+  now.setUTCHours(0, 0, 0, 0);
   let years = 1;
   if (windowQuery === "all") {
     years = 20;

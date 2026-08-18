@@ -84,6 +84,33 @@ If you prefer to run your own private instance (or if you want to use your own G
 
 Your stats are now live at `https://your-generated-domain.up.railway.app/svg/your-username`!
 
+### Deploy to Diploi
+
+[![launch with diploi button](https://diploi.com/launch-big.svg)](https://diploi.com/launch/Vanillaaz/ContribLens)
+
+1. Launch the project
+
+   Click the launch button above to create a new Diploi deployment for ContribLens.
+
+2. Install the API dependencies
+
+   Open a terminal from the **Code** section or select **Terminal** in the left sidebar. Then navigate to the API directory and install its dependencies:
+
+   ```bash
+   cd /app/apps/api
+   pnpm install
+   ```
+
+3. Add the environment variable
+
+   Open the **Environment** tab in the sidebar and add `GITHUB_TOKEN`, using a GitHub personal access token with the scopes listed above.
+
+4. View the deployment
+
+   Open the preview URL from your Diploi deployment page, then visit `/svg/your-username`.
+
+For more information, visit [diploi.com](https://diploi.com/).
+
 ### Self-host with Docker
 
 ```bash
